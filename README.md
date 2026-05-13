@@ -4,7 +4,7 @@ TechViet HRMS is a portfolio case study for an IT Business Analyst role. The pro
 
 ## Live Prototype
 
-Vercel deployment link: _to be added after deployment_
+Vercel deployment link: https://techviet-hrms-ba-portfolio.vercel.app/
 
 ## Project Structure
 
