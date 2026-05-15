@@ -5,9 +5,10 @@ import StatCard from "../components/StatCard"
 import { useData } from "../context"
 
 export default function JobPostings({ role }) {
-  const { jobPostingsData } = useData()
+  const { jobPostingsData, setJobPostingsData } = useData()
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
+  const [formError, setFormError] = useState("")
   
   // Quản lý trạng thái của Modal: type có thể là 'create', 'edit', hoặc 'view'
   const [modalState, setModalState] = useState({ isOpen: false, type: null, data: null })
@@ -21,11 +22,65 @@ export default function JobPostings({ role }) {
   })
 
   const openModal = (type, data = null) => {
+    setFormError("")
     setModalState({ isOpen: true, type, data })
   }
 
   const closeModal = () => {
+    setFormError("")
     setModalState({ isOpen: false, type: null, data: null })
+  }
+
+  const calculateDaysLeft = (deadline) => {
+    const dueDate = new Date(deadline)
+    if (Number.isNaN(dueDate.getTime())) return 0
+    const today = new Date("2026-05-15T00:00:00")
+    return Math.max(0, Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24)))
+  }
+
+  const handleSavePosting = (event) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const nextPosting = {
+      title: String(formData.get("title") || "").trim(),
+      department: String(formData.get("department") || "").trim(),
+      vacancies: Number(formData.get("vacancies")),
+      deadline: String(formData.get("deadline") || "").trim(),
+      description: String(formData.get("description") || "").trim(),
+    }
+
+    if (!nextPosting.title || !nextPosting.department || !nextPosting.vacancies || !nextPosting.deadline || !nextPosting.description) {
+      setFormError("Please complete Job Title, Department, Headcount, Deadline and Job Description before saving.")
+      return
+    }
+
+    if (modalState.type === "edit") {
+      setJobPostingsData(prev => prev.map(job => job.id === modalState.data.id
+        ? { ...job, ...nextPosting, daysLeft: calculateDaysLeft(nextPosting.deadline) }
+        : job
+      ))
+    }
+
+    if (modalState.type === "create") {
+      const nextId = Math.max(0, ...jobPostingsData.map(job => Number(job.id) || 0)) + 1
+      setJobPostingsData(prev => [{
+        id: nextId,
+        ...nextPosting,
+        status: "active",
+        applicants: 0,
+        daysLeft: calculateDaysLeft(nextPosting.deadline),
+      }, ...prev])
+    }
+
+    closeModal()
+  }
+
+  const handleArchivePosting = (job) => {
+    setJobPostingsData(prev => prev.map(item => item.id === job.id
+      ? { ...item, status: "archived", daysLeft: 0 }
+      : item
+    ))
+    if (modalState.data?.id === job.id) closeModal()
   }
 
   return (
@@ -127,7 +182,7 @@ export default function JobPostings({ role }) {
                         <Edit size={14} />
                       </button>
                       <button 
-                        onClick={(e) => { e.stopPropagation(); /* Logic archive sau này */ }}
+                        onClick={(e) => { e.stopPropagation(); handleArchivePosting(job) }}
                         className="p-1.5 hover:bg-red-100 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
                         title="Archive Job"
                       >
@@ -204,11 +259,17 @@ export default function JobPostings({ role }) {
               </div>
             ) : (
               /* Create / Edit Mode (Form nhập liệu) */
-              <div className="space-y-4">
+              <form onSubmit={handleSavePosting} className="space-y-4">
+                {formError && (
+                  <div className="bg-red-50 border border-red-100 text-red-600 text-sm font-medium px-3 py-2 rounded-lg">
+                    {formError}
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-medium text-gray-600 block mb-1">Job Title</label>
                     <input
+                      name="title"
                       defaultValue={modalState.data?.title || ""}
                       placeholder="e.g. Senior Data Analyst"
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
@@ -217,6 +278,7 @@ export default function JobPostings({ role }) {
                   <div>
                     <label className="text-xs font-medium text-gray-600 block mb-1">Department</label>
                     <input
+                      name="department"
                       defaultValue={modalState.data?.department || ""}
                       placeholder="e.g. BOS"
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
@@ -225,8 +287,10 @@ export default function JobPostings({ role }) {
                   <div>
                     <label className="text-xs font-medium text-gray-600 block mb-1">Headcount</label>
                     <input
+                      name="vacancies"
                       defaultValue={modalState.data?.vacancies || ""}
                       type="number"
+                      min="1"
                       placeholder="e.g. 2"
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
                     />
@@ -234,6 +298,7 @@ export default function JobPostings({ role }) {
                   <div>
                     <label className="text-xs font-medium text-gray-600 block mb-1">Deadline</label>
                     <input
+                      name="deadline"
                       defaultValue={modalState.data?.deadline || ""}
                       placeholder="e.g. Jun 30, 2026"
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
@@ -243,6 +308,7 @@ export default function JobPostings({ role }) {
                 <div>
                   <label className="text-xs font-medium text-gray-600 block mb-1">Job Description</label>
                   <textarea
+                    name="description"
                     rows={10}
                     defaultValue={modalState.data?.description || ""}
                     placeholder="Describe the role and requirements..."
@@ -265,19 +331,20 @@ export default function JobPostings({ role }) {
 
                 <div className="flex gap-3 mt-6 pt-4 border-t border-gray-100">
                   <button
+                    type="button"
                     onClick={closeModal}
                     className="flex-1 border border-gray-200 text-gray-600 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={closeModal}
+                    type="submit"
                     className="flex-1 bg-brand text-white py-2 rounded-lg text-sm font-medium hover:bg-brand-dark"
                   >
                     {modalState.type === 'edit' ? 'Update Posting' : 'Create & Publish'}
                   </button>
                 </div>
-              </div>
+              </form>
             )}
           </div>
         </div>

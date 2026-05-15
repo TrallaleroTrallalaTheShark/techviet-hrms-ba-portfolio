@@ -4,7 +4,7 @@ import Avatar from "../components/Avatar"
 import { useData } from "../context"
 
 export default function Applications() {
-  const { candidatesData } = useData()
+  const { candidatesData, setCandidatesData } = useData()
   const [search, setSearch] = useState("")
   const [deptFilter, setDeptFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
@@ -67,6 +67,21 @@ export default function Applications() {
     if (score >= 80) return { label: "Auto-shortlisted", style: "text-green-600 font-semibold" }
     if (score >= 50) return { label: "Manual review", style: "text-yellow-600 font-medium" }
     return { label: "Suggested rejection", style: "text-red-500 font-medium" }
+  }
+
+  const updateCandidateStatus = (ids, status) => {
+    const idSet = new Set(ids.map(id => Number(id)))
+    setCandidatesData(prev => prev.map(candidate => (
+      idSet.has(candidate.id) ? { ...candidate, status } : candidate
+    )))
+    if (selectedCV && idSet.has(selectedCV.id)) {
+      setSelectedCV(prev => prev ? { ...prev, status } : prev)
+    }
+    setSelectedIds([])
+  }
+
+  const routeCandidate = (candidate, status) => {
+    updateCandidateStatus([candidate.id], status)
   }
 
   const renderPagination = () => {
@@ -201,10 +216,10 @@ export default function Applications() {
                           
                           {c.aiScore >= 80 && (
                             <>
-                              <button className="text-xs text-white bg-brand hover:bg-brand-dark px-2.5 py-1.5 rounded-md transition-colors font-medium flex items-center gap-1">
+                              <button onClick={() => routeCandidate(c, "screened")} className="text-xs text-white bg-brand hover:bg-brand-dark px-2.5 py-1.5 rounded-md transition-colors font-medium flex items-center gap-1">
                                 <Send size={12} /> HM Review
                               </button>
-                              <button className="text-xs text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-2.5 py-1.5 rounded-md transition-colors font-medium">
+                              <button onClick={() => routeCandidate(c, "tech_test")} className="text-xs text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-2.5 py-1.5 rounded-md transition-colors font-medium">
                                 Send Test
                               </button>
                             </>
@@ -212,17 +227,17 @@ export default function Applications() {
                           
                           {c.aiScore >= 50 && c.aiScore < 80 && (
                             <>
-                              <button className="text-xs text-green-600 bg-green-50 hover:bg-green-100 border border-green-200 px-2.5 py-1.5 rounded-md transition-colors font-medium flex items-center gap-1">
+                              <button onClick={() => routeCandidate(c, "screened")} className="text-xs text-green-600 bg-green-50 hover:bg-green-100 border border-green-200 px-2.5 py-1.5 rounded-md transition-colors font-medium flex items-center gap-1">
                                 <UserCheck size={12} /> Shortlist
                               </button>
-                              <button className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 rounded-md transition-colors font-medium">
+                              <button onClick={() => routeCandidate(c, "rejected")} className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 rounded-md transition-colors font-medium">
                                 Move to Rejection Queue
                               </button>
                             </>
                           )}
 
                           {c.aiScore < 50 && (
-                            <button className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 rounded-md transition-colors font-medium flex items-center gap-1">
+                            <button onClick={() => routeCandidate(c, "rejected")} className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 rounded-md transition-colors font-medium flex items-center gap-1">
                               <Send size={12} /> Review Rejection
                             </button>
                           )}
@@ -271,13 +286,13 @@ export default function Applications() {
           
           <div className="w-px h-5 bg-gray-700"></div>
           
-          <button className="text-sm font-medium hover:text-brand-light flex items-center gap-1.5 transition-colors">
+          <button onClick={() => updateCandidateStatus(selectedIds, "screened")} className="text-sm font-medium hover:text-brand-light flex items-center gap-1.5 transition-colors">
             <Send size={14} /> Send to HM
           </button>
-          <button className="text-sm font-medium hover:text-purple-300 flex items-center gap-1.5 transition-colors">
+          <button onClick={() => updateCandidateStatus(selectedIds, "tech_test")} className="text-sm font-medium hover:text-purple-300 flex items-center gap-1.5 transition-colors">
             <FileText size={14} /> Send Tests
           </button>
-          <button className="text-sm font-medium hover:text-red-400 flex items-center gap-1.5 transition-colors">
+          <button onClick={() => updateCandidateStatus(selectedIds, "rejected")} className="text-sm font-medium hover:text-red-400 flex items-center gap-1.5 transition-colors">
             <XCircle size={14} /> Send to Rejection Queue
           </button>
           
@@ -371,10 +386,10 @@ export default function Applications() {
                   </div>
                 </div>
                 <div className="pt-6 border-t border-gray-100 flex gap-3">
-                  <button className="flex-1 bg-brand text-white py-2.5 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm">
+                  <button onClick={() => routeCandidate(selectedCV, "screened")} className="flex-1 bg-brand text-white py-2.5 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm">
                     Forward to Manager
                   </button>
-                  <button className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                  <button onClick={() => routeCandidate(selectedCV, "tech_test")} className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
                     Schedule Test
                   </button>
                 </div>

@@ -88,8 +88,6 @@ The main BA deliverables are stored in `../BA_PORTFOLIO_PACK`:
 - Data Model and Data Dictionary
 - UAT Test Cases
 - RAID Log and Change Log
-- Demo Script and CV Bullets
-- Final Audit and Sync Report
 - BPMN and Use Case diagrams
 - DOCX exports
 

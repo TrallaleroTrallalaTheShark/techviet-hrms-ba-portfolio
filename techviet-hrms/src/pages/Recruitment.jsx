@@ -6,7 +6,6 @@ import { findRoomConflict } from "../utils/interviewScheduling"
 import confetti from "canvas-confetti"
 
 export default function Recruitment({ role }) {
-  // LỖI NẰM Ở ĐÂY: Đã bổ sung interviewsData vào để không bị lỗi undefined nữa!
   const { candidatesData, setCandidatesData, interviewsData, setInterviewsData, newHiresData, setNewHiresData } = useData()
   
   const [search, setSearch] = useState("")

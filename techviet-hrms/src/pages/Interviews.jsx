@@ -28,6 +28,8 @@ export default function Interviews({ role }) {
   const [actionView, setActionView] = useState(null) 
   
   const [editForm, setEditForm] = useState({ date: "", time: "", room: "" })
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: "", message: "", onConfirm: null })
+  const [alertDialog, setAlertDialog] = useState({ isOpen: false, title: "", message: "" })
 
   const filteredInterviews = interviewsData.filter(iv => {
     if (role === "hiring_manager") return iv.department === "Engineering"
@@ -60,7 +62,11 @@ export default function Interviews({ role }) {
     const isConflict = findRoomConflict(interviewsData, { date: formattedDate, time: editForm.time, room: editForm.room }, selected.id);
 
     if (isConflict) {
-      alert(`⚠️ CONFLICT DETECTED: ${editForm.room} is already booked by ${isConflict.candidate} at ${editForm.time} on ${formattedDate}. Please choose a different room or time.`);
+      setAlertDialog({
+        isOpen: true,
+        title: "Room Conflict Detected",
+        message: `${editForm.room} overlaps with ${isConflict.candidate} at ${isConflict.time} on ${formattedDate}. Please choose a different room or time.`,
+      })
       return;
     }
 
@@ -72,14 +78,20 @@ export default function Interviews({ role }) {
   }
 
   const handleCancelInterview = () => {
-    if(window.confirm("Cancel this interview? The candidate will be moved back to the 'Screened' stage in the Recruitment Pipeline.")) {
-      setInterviewsData(prev => prev.filter(iv => iv.id !== selected.id))
-      const hasOtherActiveSession = interviewsData.some(iv => iv.id !== selected.id && (iv.candidateId === selected.candidateId || iv.candidate === selected.candidate) && ["scheduled", "in_progress"].includes(iv.status))
-      if (!hasOtherActiveSession) {
-        setCandidatesData(prev => prev.map(c => c.id === selected.candidateId || c.name === selected.candidate ? { ...c, status: "screened" } : c))
+    setConfirmDialog({
+      isOpen: true,
+      title: "Cancel Interview?",
+      message: "The candidate will move back to the Screened stage if they have no other active interview sessions.",
+      onConfirm: () => {
+        setInterviewsData(prev => prev.filter(iv => iv.id !== selected.id))
+        const hasOtherActiveSession = interviewsData.some(iv => iv.id !== selected.id && (iv.candidateId === selected.candidateId || iv.candidate === selected.candidate) && ["scheduled", "in_progress"].includes(iv.status))
+        if (!hasOtherActiveSession) {
+          setCandidatesData(prev => prev.map(c => c.id === selected.candidateId || c.name === selected.candidate ? { ...c, status: "screened" } : c))
+        }
+        setSelected(null)
+        setConfirmDialog({ isOpen: false, title: "", message: "", onConfirm: null })
       }
-      setSelected(null)
-    }
+    })
   }
 
   return (
@@ -243,7 +255,6 @@ export default function Interviews({ role }) {
                   <div className="space-y-4">
                     <div>
                       <label className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Change Date</label>
-                      {/* Đã đồng bộ sang input Date Picker xịn */}
                       <input 
                         type="date" 
                         value={editForm.date.includes("-") ? editForm.date : toIsoDate(editForm.date)}
@@ -277,6 +288,35 @@ export default function Interviews({ role }) {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDialog.isOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl animate-in zoom-in-95 duration-200 text-center">
+            <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center mb-4 bg-red-100 text-red-500">
+              <AlertTriangle size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">{confirmDialog.title}</h3>
+            <p className="text-sm text-gray-500 mb-6">{confirmDialog.message}</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmDialog({ isOpen: false, title: "", message: "", onConfirm: null })} className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-bold hover:bg-gray-50">Keep Session</button>
+              <button onClick={confirmDialog.onConfirm} className="flex-1 px-4 py-2.5 text-white rounded-xl text-sm font-bold bg-red-500 hover:bg-red-600">Cancel Session</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {alertDialog.isOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[65] flex items-center justify-center backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl animate-in zoom-in-95 duration-200 text-center">
+            <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center mb-4 bg-red-100 text-red-500">
+              <AlertTriangle size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">{alertDialog.title}</h3>
+            <p className="text-sm text-gray-500 mb-6">{alertDialog.message}</p>
+            <button onClick={() => setAlertDialog({ isOpen: false, title: "", message: "" })} className="w-full px-4 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-black">Okay</button>
           </div>
         </div>
       )}
