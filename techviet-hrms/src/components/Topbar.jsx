@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Bell, Search, ChevronDown } from "lucide-react"
 import { ROLE_PROFILES } from "../rbac"
 import { useLanguage } from "../context"
@@ -5,15 +6,24 @@ import { useLanguage } from "../context"
 export default function Topbar({ role, setRole, roles }) {
   const profile = ROLE_PROFILES[role]
   const { language, setLanguage, t } = useLanguage()
+  const [showViNotice, setShowViNotice] = useState(false)
+
+  const handleLanguageChange = (code) => {
+    if (code === "vi" && language !== "vi") {
+      setShowViNotice(true)
+    }
+    setLanguage(code)
+  }
 
   return (
-    <header className="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10">
-      <div className="flex items-center gap-1">
-        {["crm", "accounting", "inventory"].map(m => (
-          <span key={m} className="text-sm text-gray-400 px-3 py-1 rounded hover:bg-gray-50 cursor-pointer">{t(`appModules.${m}`, m)}</span>
-        ))}
-        <span className="text-sm font-semibold text-white bg-brand px-3 py-1 rounded">{t("appModules.hrms", "HRMS")}</span>
-      </div>
+    <>
+      <header className="h-14 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10">
+        <div className="flex items-center gap-1">
+          {["crm", "accounting", "inventory"].map(m => (
+            <span key={m} className="text-sm text-gray-400 px-3 py-1 rounded hover:bg-gray-50 cursor-pointer">{t(`appModules.${m}`, m)}</span>
+          ))}
+          <span className="text-sm font-semibold text-white bg-brand px-3 py-1 rounded">{t("appModules.hrms", "HRMS")}</span>
+        </div>
 
       <div className="flex items-center gap-3">
         <div className="relative">
@@ -29,7 +39,7 @@ export default function Topbar({ role, setRole, roles }) {
           {["en", "vi"].map(code => (
             <button
               key={code}
-              onClick={() => setLanguage(code)}
+              onClick={() => handleLanguageChange(code)}
               className={`px-2 py-0.5 rounded-md text-xs font-bold transition-colors ${language === code ? "bg-brand text-white shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
             >
               {code.toUpperCase()}
@@ -68,7 +78,23 @@ export default function Topbar({ role, setRole, roles }) {
             ))}
           </div>
         </div>
-      </div>
-    </header>
+        </div>
+      </header>
+
+      {showViNotice && (
+        <div className="fixed inset-0 bg-black/50 z-[80] flex items-center justify-center backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl text-center animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-full bg-brand/10 text-brand mx-auto flex items-center justify-center text-sm font-black mb-4">
+              VI
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">{t("topbar.viDemoTitle", "Vietnamese Demo Mode")}</h3>
+            <p className="text-sm text-gray-500 leading-relaxed mb-6">{t("topbar.viDemoMessage", "Vietnamese language support is currently a demo. Some sample data, table labels and modal details may still appear in English.")}</p>
+            <button onClick={() => setShowViNotice(false)} className="w-full bg-brand text-white py-2.5 rounded-xl text-sm font-bold hover:bg-brand-dark transition-colors">
+              {t("topbar.viDemoConfirm", "Got it")}
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

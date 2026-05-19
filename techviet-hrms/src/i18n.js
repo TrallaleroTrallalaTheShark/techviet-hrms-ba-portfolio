@@ -10,6 +10,9 @@ export const translations = {
       search: "Search...",
       switchRole: "Switch Role / RBAC View",
       language: "Language",
+      viDemoTitle: "Vietnamese Demo Mode",
+      viDemoMessage: "Vietnamese language support is currently a demo. Some sample data, table labels and modal details may still appear in English.",
+      viDemoConfirm: "Got it",
     },
     roles: {
       hr_manager: { label: "HR Manager", greeting: "Good morning, Lan!" },
@@ -31,7 +34,7 @@ export const translations = {
       recruitment: "Pipeline",
       interviews: "Interviews",
       onboarding: "Onboarding",
-      employees: "Directory",
+      employees: "People & Org Chart",
       performance: "Performance",
     },
     pages: {
@@ -74,7 +77,7 @@ export const translations = {
         trackerSubtitle: "Monitor new hire onboarding progress and task completion",
       },
       employees: {
-        title: "Employee Directory",
+        title: "People & Org Chart",
         subtitle: "Search employees, view reporting lines, and inspect role-based profile details. Views are scoped by RBAC.",
       },
       performance: {
@@ -95,6 +98,9 @@ export const translations = {
       search: "Tìm kiếm...",
       switchRole: "Đổi vai trò / Xem theo RBAC",
       language: "Ngôn ngữ",
+      viDemoTitle: "Chế độ tiếng Việt demo",
+      viDemoMessage: "Tính năng tiếng Việt hiện chỉ dùng để demo. Một số dữ liệu mẫu, nhãn trong bảng và chi tiết trong modal có thể vẫn hiển thị bằng tiếng Anh.",
+      viDemoConfirm: "Đã hiểu",
     },
     roles: {
       hr_manager: { label: "Quản lý HR", greeting: "Chào buổi sáng, Lan!" },
@@ -116,7 +122,7 @@ export const translations = {
       recruitment: "Pipeline",
       interviews: "Phỏng vấn",
       onboarding: "Onboarding",
-      employees: "Danh bạ",
+      employees: "Hồ sơ & sơ đồ tổ chức",
       performance: "Đánh giá",
     },
     pages: {
@@ -159,8 +165,8 @@ export const translations = {
         trackerSubtitle: "Theo dõi tiến độ onboarding và hoàn thành task của nhân viên mới",
       },
       employees: {
-        title: "Danh bạ nhân viên",
-        subtitle: "Tìm nhân viên, xem tuyến báo cáo và hồ sơ theo quyền truy cập RBAC.",
+        title: "Hồ sơ & sơ đồ tổ chức",
+        subtitle: "Tra cứu nhân viên, xem tuyến báo cáo và thông tin hồ sơ theo quyền truy cập RBAC.",
       },
       performance: {
         management: "Quản lý hiệu suất",
