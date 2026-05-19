@@ -5,6 +5,7 @@ import { ROLE_PERMISSIONS, ROLE_PROFILES } from "../rbac"
 import Avatar from "../components/Avatar"
 import Badge from "../components/Badge"
 import confetti from "canvas-confetti"
+import { useLanguage } from "../context"
 
 const reviewCycles = [
   { id: "q2-2026", label: "Q2 2026", status: "Active", range: "Apr 1 - Jun 30, 2026", completion: 62, avgScore: 3.8, reviewDue: "Jun 30, 2026" },
@@ -325,6 +326,7 @@ function NineBoxMatrix({ selectedCycle, role }) {
 }
 
 export default function Performance({ role }) {
+  const { t } = useLanguage()
   const [tab, setTab] = useState(role === "new_employee" ? "review" : "kpi")
   const [selectedCycleId, setSelectedCycleId] = useState("q2-2026")
   const [selected, setSelected] = useState(null)
@@ -383,7 +385,7 @@ export default function Performance({ role }) {
   return (
     <div className="space-y-5 pb-10">
       <div className="flex items-center justify-between gap-4">
-        <div><h1 className="text-xl font-bold text-gray-900">{role === "new_employee" ? "My Performance Review" : role === "hiring_manager" ? "Team Performance" : "Performance Management"}</h1><p className="text-sm font-medium text-gray-500 mt-0.5">{selectedCycle.label} · {selectedCycle.range} · {selectedCycle.status}</p></div>
+        <div><h1 className="text-xl font-bold text-gray-900">{role === "new_employee" ? t("pages.performance.mine", "My Performance Review") : role === "hiring_manager" ? t("pages.performance.team", "Team Performance") : t("pages.performance.management", "Performance Management")}</h1><p className="text-sm font-medium text-gray-500 mt-0.5">{selectedCycle.label} · {selectedCycle.range} · {selectedCycle.status}</p></div>
         <div className="flex items-center gap-2">{role === "hr_manager" && !isHistorical && <button onClick={() => setShowKpiModal(true)} className="bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-emerald-600 transition-colors flex items-center gap-2"><Plus size={15}/> Create KPI</button>}<div className="relative"><History size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><select value={selectedCycleId} onChange={e => setSelectedCycleId(e.target.value)} className="pl-9 pr-9 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-bold text-gray-700 shadow-sm focus:outline-none focus:border-brand">{reviewCycles.map(c => <option key={c.id} value={c.id}>{c.label} - {c.status}</option>)}</select></div>{role === "hr_manager" && !isHistorical && <button className="bg-brand text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-brand-dark transition-colors flex items-center gap-2">Start Review Cycle</button>}</div>
       </div>
 

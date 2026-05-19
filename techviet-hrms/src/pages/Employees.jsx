@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from "react"
 import { Search, X, ZoomIn, ZoomOut, ChevronDown, ChevronUp, Mail, Phone, Lock, Building2, Monitor, TrendingUp } from "lucide-react"
 import Avatar from "../components/Avatar"
 import { ROLE_PROFILES } from "../rbac"
+import { useLanguage } from "../context"
 
 // MOCK DATA CƠ BẢN — đồng bộ với candidate/new hire/performance data
 const baseEmployees = [
@@ -168,6 +169,7 @@ function OrgNode({ emp, onSelect, searchQuery, isFocusRoot = false }) {
 }
 
 export default function Employees({ role }) {
+  const { t } = useLanguage()
   const [view, setView] = useState("list")
   const [search, setSearch] = useState("")
   const [deptFilter, setDeptFilter] = useState("all")
@@ -221,8 +223,8 @@ export default function Employees({ role }) {
     <div className="space-y-5 pb-10 h-[calc(100vh-80px)] flex flex-col">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Employee Directory</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Search employees, view reporting lines, and inspect role-based profile details. Views are scoped by RBAC.</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t("pages.employees.title", "Employee Directory")}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{t("pages.employees.subtitle", "Search employees, view reporting lines, and inspect role-based profile details. Views are scoped by RBAC.")}</p>
         </div>
         <div className="flex items-center gap-2">
           {role === "hr_manager" && (

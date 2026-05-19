@@ -2,7 +2,7 @@ import { AlertTriangle, TrendingUp, Users, Briefcase, UserCheck, Star, Download,
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import StatCard from "../components/StatCard"
 import Badge from "../components/Badge"
-import { useData } from "../context"
+import { useData, useLanguage } from "../context"
 import { ROLE_PROFILES, ROLE_PERMISSIONS } from "../rbac"
 import { documents, onboardingChecklist } from "../data/mockData"
 import {
@@ -31,6 +31,7 @@ const formatTime = (time) => {
 
 export default function Dashboard({ role, setPage }) {
   const { candidatesData, interviewsData, newHiresData, jobPostingsData } = useData()
+  const { t } = useLanguage()
   const profile = ROLE_PROFILES[role]
   const permissions = ROLE_PERMISSIONS[role] || {}
   const departmentScope = permissions.departmentScope
@@ -76,12 +77,12 @@ export default function Dashboard({ role, setPage }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">{profile.greeting}</h1>
+        <h1 className="text-xl font-semibold text-gray-900">{t(`roles.${role}.greeting`, profile.greeting)}</h1>
         <p className="text-sm text-gray-500 mt-0.5">
-          {role === "hr_manager" && "Dashboard summarizes Job Postings, Applications, Pipeline, Interviews, Onboarding and Directory data."}
-          {role === "hiring_manager" && "Engineering-scoped recruitment and team view based on your RBAC permissions."}
-          {role === "new_employee" && "Your onboarding and review workspace."}
-          {role === "it_admin" && "Provisioning queue synced from new hires in Onboarding."}
+          {role === "hr_manager" && t("pages.dashboard.hr", "Dashboard summarizes Job Postings, Applications, Pipeline, Interviews, Onboarding and Directory data.")}
+          {role === "hiring_manager" && t("pages.dashboard.hiring", "Engineering-scoped recruitment and team view based on your RBAC permissions.")}
+          {role === "new_employee" && t("pages.dashboard.employee", "Your onboarding and review workspace.")}
+          {role === "it_admin" && t("pages.dashboard.it", "Provisioning queue synced from new hires in Onboarding.")}
         </p>
       </div>
 
@@ -89,12 +90,12 @@ export default function Dashboard({ role, setPage }) {
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
           <AlertTriangle size={18} className="text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-amber-800">Urgent Actions Required</p>
+            <p className="text-sm font-medium text-amber-800">{t("pages.dashboard.urgent", "Urgent Actions Required")}</p>
             <div className="grid md:grid-cols-3 gap-2 mt-2">
               {urgentActions.map((a, i) => (
                 <button key={i} onClick={() => setPage(a.page)} className="text-left bg-white/70 border border-amber-200 rounded-lg px-3 py-2 hover:bg-white hover:shadow-sm transition-all group">
                   <span className="block text-sm text-amber-800 font-medium">{a.label}</span>
-                  <span className="mt-1 inline-flex items-center gap-1 text-xs text-brand font-bold group-hover:underline">Go to issue <ArrowRight size={12} /></span>
+                  <span className="mt-1 inline-flex items-center gap-1 text-xs text-brand font-bold group-hover:underline">{t("pages.dashboard.goToIssue", "Go to issue")} <ArrowRight size={12} /></span>
                 </button>
               ))}
             </div>

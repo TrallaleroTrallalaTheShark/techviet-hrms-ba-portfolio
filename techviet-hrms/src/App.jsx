@@ -9,13 +9,15 @@ import Onboarding from "./pages/Onboarding"
 import Employees from "./pages/Employees"
 import Performance from "./pages/Performance"
 
-import { RoleContext, DataContext } from "./context"
+import { RoleContext, DataContext, LanguageContext } from "./context"
 import { ROLE_PROFILES, canAccessPage } from "./rbac"
 import { candidates as initialCandidates, interviews as initialInterviews, newHires as initialNewHires, jobPostings as initialJobPostings } from "./data/mockData"
+import { getTranslation } from "./i18n"
 
 export default function App() {
   const [role, setRole] = useState("hr_manager")
   const [page, setPage] = useState("dashboard")
+  const [language, setLanguage] = useState("en")
 
   const [candidatesData, setCandidatesData] = useState(initialCandidates)
   const [interviewsData, setInterviewsData] = useState(initialInterviews)
@@ -39,17 +41,23 @@ export default function App() {
   }
 
   return (
-    <RoleContext.Provider value={{ role, setRole, roles: ROLE_PROFILES }}>
-      <DataContext.Provider value={{ 
-        candidatesData, setCandidatesData, 
-        interviewsData, setInterviewsData,
-        newHiresData, setNewHiresData,
-        jobPostingsData, setJobPostingsData,
-      }}>
-        <Layout role={role} setRole={setRole} page={safePage} setPage={setPage} roles={ROLE_PROFILES}>
-          {renderPage()}
-        </Layout>
-      </DataContext.Provider>
-    </RoleContext.Provider>
+    <LanguageContext.Provider value={{
+      language,
+      setLanguage,
+      t: (key, fallback) => getTranslation(language, key, fallback),
+    }}>
+      <RoleContext.Provider value={{ role, setRole, roles: ROLE_PROFILES }}>
+        <DataContext.Provider value={{ 
+          candidatesData, setCandidatesData, 
+          interviewsData, setInterviewsData,
+          newHiresData, setNewHiresData,
+          jobPostingsData, setJobPostingsData,
+        }}>
+          <Layout role={role} setRole={setRole} page={safePage} setPage={setPage} roles={ROLE_PROFILES}>
+            {renderPage()}
+          </Layout>
+        </DataContext.Provider>
+      </RoleContext.Provider>
+    </LanguageContext.Provider>
   )
 }

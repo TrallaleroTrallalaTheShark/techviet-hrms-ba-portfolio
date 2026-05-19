@@ -2,10 +2,11 @@ import { useState } from "react"
 import { Search, Edit, Archive, X, Globe } from "lucide-react"
 import Badge from "../components/Badge"
 import StatCard from "../components/StatCard"
-import { useData } from "../context"
+import { useData, useLanguage } from "../context"
 
 export default function JobPostings({ role }) {
   const { jobPostingsData, setJobPostingsData } = useData()
+  const { t } = useLanguage()
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
   const [formError, setFormError] = useState("")
@@ -88,15 +89,15 @@ export default function JobPostings({ role }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Job Postings</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Manage and track all job openings</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t("pages.jobs.title", "Job Postings")}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{t("pages.jobs.subtitle", "Manage and track all job openings")}</p>
         </div>
         {role === "hr_manager" && (
           <button
             onClick={() => openModal('create')}
             className="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors"
           >
-            + New Posting
+            {t("pages.jobs.newPosting", "+ New Posting")}
           </button>
         )}
       </div>
@@ -323,9 +324,9 @@ export default function JobPostings({ role }) {
                   </div>
                   <div>
                     <label htmlFor="sync" className="text-sm font-medium text-slate-600 flex items-center gap-1.5 cursor-not-allowed">
-                      <Globe size={14} /> Phase 2: Omnichannel Auto-Sync
+                      <Globe size={14} /> {t("pages.jobs.phase2Title", "Phase 2: External Job Board Sync")}
                     </label>
-                    <p className="text-xs text-slate-500 mt-0.5">External job board publishing (LinkedIn, TopCV, Indeed) is documented as Phase 2 and intentionally disabled for Phase 1 scope control.</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{t("pages.jobs.phase2Description", "Publishing jobs to LinkedIn, TopCV and Indeed is documented as Phase 2 and intentionally disabled for Phase 1 scope control.")}</p>
                   </div>
                 </div>
 

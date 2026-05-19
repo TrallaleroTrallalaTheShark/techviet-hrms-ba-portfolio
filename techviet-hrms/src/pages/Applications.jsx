@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { Search, ChevronLeft, ChevronRight, Info, FileText, X, Send, UserCheck, CheckCircle2, XCircle } from "lucide-react"
 import Avatar from "../components/Avatar"
-import { useData } from "../context"
+import { useData, useLanguage } from "../context"
 
 export default function Applications() {
   const { candidatesData, setCandidatesData } = useData()
+  const { t } = useLanguage()
   const [search, setSearch] = useState("")
   const [deptFilter, setDeptFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
@@ -109,11 +110,11 @@ export default function Applications() {
     <div className="space-y-6 pb-16">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Applications Box</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Review and route candidates from all ATS sources</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t("pages.applications.title", "Applications Box")}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{t("pages.applications.subtitle", "Review and route candidates from all ATS sources")}</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-500 bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-sm">
-          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" /> AI Screening Active
+          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" /> {t("pages.applications.aiActive", "AI Screening Active")}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, Video, ClipboardCheck, Users, MapPin, Printer, Filter, Edit3, Trash2, Clock, Send, AlertTriangle, X } from "lucide-react"
-import { useData } from "../context"
+import { useData, useLanguage } from "../context"
 import { findRoomConflict } from "../utils/interviewScheduling"
 
 const days = [
@@ -22,6 +22,7 @@ const toIsoDate = (displayDate) => {
 
 export default function Interviews({ role }) {
   const { interviewsData, setInterviewsData, setCandidatesData } = useData()
+  const { t } = useLanguage()
 
   const [selected, setSelected] = useState(null)
   const [deptFilter, setDeptFilter] = useState("all")
@@ -98,8 +99,8 @@ export default function Interviews({ role }) {
     <div className="space-y-5 pb-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Interviews Calendar</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{role === 'hiring_manager' ? "Your personalized interview schedule" : "Company-wide interview coordination"}</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t("pages.interviews.title", "Interviews Calendar")}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{role === 'hiring_manager' ? t("pages.interviews.hiringSubtitle", "Your personalized interview schedule") : t("pages.interviews.hrSubtitle", "Company-wide interview coordination")}</p>
         </div>
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-2 border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all shadow-sm">

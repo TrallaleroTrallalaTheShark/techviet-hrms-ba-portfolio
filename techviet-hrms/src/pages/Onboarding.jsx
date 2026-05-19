@@ -6,11 +6,12 @@ import Badge from "../components/Badge"
 import ProgressBar from "../components/ProgressBar"
 
 // IMPORT GLOBAL STATE
-import { useData } from "../context"
+import { useData, useLanguage } from "../context"
 
 export default function Onboarding({ role }) {
   // Lấy danh sách nhân viên mới từ Global State
   const { newHiresData, setNewHiresData } = useData()
+  const { t } = useLanguage()
 
   const [search, setSearch] = useState("")
   const [selected, setSelected] = useState(null)
@@ -37,8 +38,8 @@ export default function Onboarding({ role }) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">My Onboarding</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Track your onboarding progress and complete required tasks</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t("pages.onboarding.myTitle", "My Onboarding")}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{t("pages.onboarding.mySubtitle", "Track your onboarding progress and complete required tasks")}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
@@ -182,8 +183,8 @@ export default function Onboarding({ role }) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">IT Provisioning</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Manage equipment and account setup for new hires</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t("pages.onboarding.itTitle", "IT Provisioning")}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{t("pages.onboarding.itSubtitle", "Manage equipment and account setup for new hires")}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
@@ -253,8 +254,8 @@ export default function Onboarding({ role }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Onboarding Tracker</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Monitor new hire onboarding progress and task completion</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t("pages.onboarding.trackerTitle", "Onboarding Tracker")}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{t("pages.onboarding.trackerSubtitle", "Monitor new hire onboarding progress and task completion")}</p>
         </div>
         {role === "hr_manager" && (
           <button className="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark shadow-sm">

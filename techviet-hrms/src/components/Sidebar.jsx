@@ -1,7 +1,11 @@
 import { NAV_ITEMS } from "../rbac"
+import { useLanguage } from "../context"
+
+const sectionKey = (section) => section.toLowerCase().replace(/\s+/g, "_")
 
 export default function Sidebar({ role, page, setPage }) {
   const items = NAV_ITEMS[role] || NAV_ITEMS.hr_manager
+  const { t } = useLanguage()
 
   return (
     <aside className="w-56 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 z-40">
@@ -22,7 +26,7 @@ export default function Sidebar({ role, page, setPage }) {
           if (item.section) {
             return (
               <p key={i} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 pt-5 pb-2">
-                {item.section}
+                {t(`sections.${sectionKey(item.section)}`, item.section)}
               </p>
             )
           }
@@ -39,7 +43,7 @@ export default function Sidebar({ role, page, setPage }) {
               }`}
             >
               <Icon size={18} className={isActive ? "text-brand" : "text-gray-400"} />
-              {item.label}
+              {t(`nav.${item.key}`, item.label)}
               {isActive && <div className="ml-auto w-1 h-4 bg-brand rounded-full"></div>}
             </button>
           )

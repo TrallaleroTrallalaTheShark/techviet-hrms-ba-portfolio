@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { Search, X, Calendar, Send, Settings, Code, FileText, UserCheck, ChevronRight, MessageSquare, ClipboardCheck, Clock, MapPin, Trash2, AlertTriangle, PartyPopper } from "lucide-react"
 import Avatar from "../components/Avatar"
-import { useData } from "../context"
+import { useData, useLanguage } from "../context"
 import { findRoomConflict } from "../utils/interviewScheduling"
 import confetti from "canvas-confetti"
 
 export default function Recruitment({ role }) {
   const { candidatesData, setCandidatesData, interviewsData, setInterviewsData, newHiresData, setNewHiresData } = useData()
+  const { t } = useLanguage()
   
   const [search, setSearch] = useState("")
   const [deptFilter, setDeptFilter] = useState("all")
@@ -162,10 +163,10 @@ export default function Recruitment({ role }) {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold text-gray-900">Recruitment Pipeline</h1>
+            <h1 className="text-xl font-semibold text-gray-900">{t("pages.recruitment.title", "Recruitment Pipeline")}</h1>
             <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm"><Settings size={10} /> {(departmentScope || deptFilter) === "Engineering" ? "Technical Flow" : "Standard Flow"}</span>
           </div>
-          <p className="text-sm text-gray-500 mt-0.5 font-medium">{role === 'hiring_manager' ? 'Hiring Manager Workspace' : 'Recruitment Overview'}</p>
+          <p className="text-sm text-gray-500 mt-0.5 font-medium">{role === 'hiring_manager' ? t("pages.recruitment.hiringSubtitle", "Hiring Manager Workspace") : t("pages.recruitment.hrSubtitle", "Recruitment Overview")}</p>
         </div>
       </div>
 
